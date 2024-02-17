@@ -5,7 +5,7 @@ USE employees_db;
 
 CREATE TABLE department(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(30)
+    department_name VARCHAR(30)
 );
 
 CREATE TABLE role(
@@ -28,6 +28,7 @@ CREATE TABLE employee(
     REFERENCES role(id), 
     FOREIGN KEY (manager_id)
     REFERENCES employee(id)
+    ON DELETE SET NULL
 );
 
 -- department.id needs to be linked to role.department_id
