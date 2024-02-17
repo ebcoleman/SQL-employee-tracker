@@ -35,4 +35,6 @@ async function promptUser() {
     console.log('You chose: ', action);
 
 
-}
+};
+
+promptUser();
