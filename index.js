@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
-// Create the connection to database
+// connects to the employees db
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     database: 'employees_db',
 });
 
-// Function to display all departments
+// function displays all departments
 function showDepartment() {
     const query = 'SELECT * FROM department';
     connection.query(query, (err, results) => {
@@ -21,11 +21,11 @@ function showDepartment() {
         results.forEach(department => {
             console.log(`ID: ${department.id} | Name: ${department.department_name}`);
         });
-        promptUser(); // Continue prompting after displaying departments
+        promptUser(); 
     });
 }
 
-// Function to display all roles
+// function displays all roles
 function viewAllRoles() {
     const query = 'SELECT * FROM role';
     connection.query(query, (err, results) => {
@@ -37,12 +37,12 @@ function viewAllRoles() {
         results.forEach(role => {
             console.log(`ID: ${role.id} | Title: ${role.title} | Salary: ${role.salary} | Department ID: ${role.department_id}`);
         });
-        promptUser(); // Continue prompting after displaying roles
+        promptUser(); 
     });
 }
 
 
-// Function to display all employees
+// function displays all employees
 function viewAllEmployees() {
     const query = 'SELECT * FROM employee';
     connection.query(query, (err, results) => {
@@ -54,12 +54,12 @@ function viewAllEmployees() {
         results.forEach(employee => {
             console.log(`ID: ${employee.id} | Name: ${employee.first_name} ${employee.last_name} | Role ID: ${employee.role_id} | Manager ID: ${employee.manager_id}`);
         });
-        promptUser(); // Continue prompting after displaying employees
+        promptUser();
     });
 }
 
 
-// Function to add a department
+// function to add a department
 async function addDepartment() {
     const { departmentName } = await inquirer.prompt({
         type: 'input',
@@ -74,12 +74,12 @@ async function addDepartment() {
             return;
         }
         console.log('Department added successfully!');
-        promptUser(); // Continue prompting after adding the department
+        promptUser();
     });
 }
 
 
-// Function to add a role
+// function to add a role
 async function addRole() {
     const { title, salary, departmentId } = await inquirer.prompt([
         {
@@ -99,6 +99,7 @@ async function addRole() {
         }
     ]);
 
+    // inserts the role into the role table
     const query = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
     connection.query(query, [title, salary, departmentId], (err, results) => {
         if (err) {
@@ -106,11 +107,11 @@ async function addRole() {
             return;
         }
         console.log('Role added successfully!');
-        promptUser(); // Continue prompting after adding the role
+        promptUser();
     });
 }
 
-// Function to add an employee
+// function to add an employee
 async function addEmployee() {
     const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
         {
@@ -134,7 +135,7 @@ async function addEmployee() {
             message: 'Enter the manager ID for the employee:',
         },
     ]);
-
+    // inserts into employee table
     const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
     connection.query(query, [firstName, lastName, roleId, managerId], (err, results) => {
         if (err) {
@@ -147,7 +148,7 @@ async function addEmployee() {
 }
 
 // the below to functions are needed for the update employee role function below
-// Function to fetch all employees from the database
+// function to fetch all employees
 async function fetchEmployees() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM employee';
@@ -162,7 +163,7 @@ async function fetchEmployees() {
     });
 }
 
-// Function to fetch all roles from the database
+// function to fetch all roles 
 async function fetchRoles() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM role';
@@ -177,15 +178,13 @@ async function fetchRoles() {
     });
 }
 
-// Function to update an employee role
+// function to update an employee role
 async function updateEmployeeRole() {
-    // Fetch all employees from the database
+   
     const employees = await fetchEmployees();
-
-    // Fetch all roles from the database
     const roles = await fetchRoles();
 
-    // Prompt user to select an employee and their new role
+    // prompts user to select an employee
     const { employeeId, roleId } = await inquirer.prompt([
         {
             type: 'list',
@@ -207,7 +206,7 @@ async function updateEmployeeRole() {
         },
     ]);
 
-    // Update employee role in the database
+    // updates employee role
     const updateQuery = `UPDATE employee SET role_id = ? WHERE id = ?`;
     connection.query(updateQuery, [roleId, employeeId], (err, results) => {
         if (err) {
@@ -215,11 +214,11 @@ async function updateEmployeeRole() {
             return;
         }
         console.log('Employee role updated successfully!');
-        promptUser(); // Continue prompting after updating the employee role
+        promptUser();
     });
 }
 
-// Function to handle user input
+// function to handle user input
 async function promptUser() {
     const questions = [
         {
@@ -269,6 +268,6 @@ async function promptUser() {
     }
 }
 
-// Start the application
+// starts application
 promptUser();
 
